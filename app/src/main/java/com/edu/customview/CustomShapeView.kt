@@ -4,53 +4,63 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import kotlin.experimental.and
+import kotlin.experimental.or
+
 
 /**
  * TODO: document your custom view class.
  */
 class CustomShapeView : View {
+    object Corners {
+        const val NONE: Int = 1
+        const val TOP_LEFT = 2
+        const val TOP_RIGHT = 4
+        const val BOTTOM_LEFT = 8
+        const val BOTTOM_RIGHT = 16
 
-    private var _exampleString: String? = null // TODO: use a default from R.string...
-    private var _exampleColor: Int = Color.RED // TODO: use a default from R.color...
-    private var _exampleDimension: Float = 0f // TODO: use a default from R.dimen...
+        val TOP = (TOP_LEFT or TOP_RIGHT)
+        val BOTTOM = (BOTTOM_LEFT or BOTTOM_RIGHT)
+        val LEFT = (TOP_LEFT or BOTTOM_LEFT)
+        val RIGHT = (TOP_RIGHT or BOTTOM_RIGHT)
 
+        val ALL = (TOP_LEFT or TOP_RIGHT or BOTTOM_RIGHT or BOTTOM_LEFT)
+    }
 
+    private var _strokeWidth = 0f
+    private var _strokeColor = Color.BLACK
+    private var _cornerRadius = 0f
+    private var _corners: Int = Corners.NONE
 
-    private lateinit var textPaint: TextPaint
-    private var textWidth: Float = 0f
-    private var textHeight: Float = 0f
-
-    /**
-     * The text to draw
-     */
-    var exampleString: String?
-        get() = _exampleString
+    var strokeWidth: Float
+        get() = _strokeWidth
         set(value) {
-            _exampleString = value
+            _strokeWidth = value
             invalidateTextPaintAndMeasurements()
         }
 
-    /**
-     * The font color
-     */
-    var exampleColor: Int
-        get() = _exampleColor
+    var corners: Int
+        get() = _corners
         set(value) {
-            _exampleColor = value
+            _corners = value
+        }
+
+    var strokeColor: Int
+        get() = _strokeColor
+        set(value) {
+            _strokeColor = value
             invalidateTextPaintAndMeasurements()
         }
 
-    /**
-     * In the example view, this dimension is the font size.
-     */
-    var exampleDimension: Float
-        get() = _exampleDimension
+    var cornerRadius: Float
+        get() = _cornerRadius
         set(value) {
-            _exampleDimension = value
+            _cornerRadius = value
             invalidateTextPaintAndMeasurements()
         }
 
@@ -74,6 +84,8 @@ class CustomShapeView : View {
     ) {
         init(attrs, defStyle)
     }
+    // Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
+    // values that should fall on pixel boundaries.
 
     private fun init(attrs: AttributeSet?, defStyle: Int) {
         // Load attributes
@@ -81,28 +93,16 @@ class CustomShapeView : View {
             attrs, R.styleable.CustomShapeView, defStyle, 0
         ).apply {
             try {
-                val cornerRadius = getInt(R.styleable.CustomShapeView_cornerRadius, -1)
-                val strokeWidth = getDimension(R.styleable.CustomShapeView_strokeColor, 0f)
-                val strokeColor = getColor(R.styleable.CustomShapeView_strokeColor, Color.BLACK)
+                cornerRadius = getFloat(R.styleable.CustomShapeView_cornerRadius, -1f)
+                strokeWidth = getDimension(R.styleable.CustomShapeView_strokeColor, 0f)
+                strokeColor = getColor(R.styleable.CustomShapeView_strokeColor, Color.BLACK)
+                corners = getInteger(R.styleable.CustomShapeView_corners, Corners.NONE)
 
             } finally {
                 recycle()
             }
         }
 
-        _exampleString = a.getString(
-            R.styleable.CustomShapeView_exampleString
-        )
-        _exampleColor = a.getColor(
-            R.styleable.CustomShapeView_exampleColor,
-            exampleColor
-        )
-        // Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
-        // values that should fall on pixel boundaries.
-        _exampleDimension = a.getDimension(
-            R.styleable.CustomShapeView_exampleDimension,
-            exampleDimension
-        )
 
         if (a.hasValue(R.styleable.CustomShapeView_exampleDrawable)) {
             exampleDrawable = a.getDrawable(
@@ -112,15 +112,6 @@ class CustomShapeView : View {
         }
 
         a.recycle()
-
-        // Set up a default TextPaint object
-        textPaint = TextPaint().apply {
-            flags = Paint.ANTI_ALIAS_FLAG
-            textAlign = Paint.Align.LEFT
-        }
-
-        // Update TextPaint and text measurements from attributes
-        invalidateTextPaintAndMeasurements()
     }
 
     private fun invalidateTextPaintAndMeasurements() {
@@ -144,6 +135,31 @@ class CustomShapeView : View {
 
         val contentWidth = width - paddingLeft - paddingRight
         val contentHeight = height - paddingTop - paddingBottom
+        val paint = Paint()
+        paint.isAntiAlias = true
+
+        var topLeft = 0f
+        var topRight= 0f
+        var bottomRight= 0f
+        var bottomLeft = 0f
+
+        if (Flags.hasFlag(corners, Corners.TOP_LEFT))
+            topLeft = cornerRadius
+        if (Flags.hasFlag(corners, Corners.TOP_RIGHT))
+            topRight = cornerRadius
+        if (Flags.hasFlag(corners, Corners.BOTTOM_RIGHT))
+            bottomRight = cornerRadius
+        if (Flags.hasFlag(corners, Corners.BOTTOM_LEFT))
+            bottomLeft = cornerRadius
+
+
+
+        canvas.drawRoundRect(
+            RectF(0f, 0f, contentWidth.toFloat(), contentHeight.toFloat()),
+            80f,
+            80f,
+            paint
+        )
 
         exampleString?.let {
             // Draw the text.
