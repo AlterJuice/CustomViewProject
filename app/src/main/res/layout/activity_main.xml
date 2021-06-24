@@ -24,71 +24,70 @@
     </ScrollView>
 
     <com.edu.customview.CustomShapeView
-        android:layout_centerInParent="true"
-        android:layout_above="@id/customShapeView1"
         android:id="@+id/customShapeView3"
         style="@style/Widget.Theme.CustomViewProject.MyView"
         android:layout_width="200dp"
         android:layout_height="200dp"
+        android:layout_above="@id/customShapeView1"
+        android:layout_centerInParent="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="5dp"
         android:padding="400dp"
         android:paddingHorizontal="20dp"
 
-        app:shapeColor="@color/light_blue_400"
-        app:strokeColor="@color/light_blue_600"
-
-        app:radius="100dp"
-        app:outerRadiusTopLeft="15dp"
-        app:innerRadiusTopLeft="15dp"
         android:rotation="45"
-        app:innerPadding="10dp"
         app:compareInnerWithOuter="false"
-        />
+
+        app:innerPadding="10dp"
+        app:innerRadiusTopLeft="15dp"
+        app:outerRadiusTopLeft="15dp"
+        app:radius="100dp"
+        app:shapeColor="@color/light_blue_400"
+        app:strokeColor="@color/light_blue_600" />
 
     <com.edu.customview.CustomShapeView
         android:id="@+id/customShapeView1"
-        android:layout_alignParentStart="true"
         style="@style/Widget.Theme.CustomViewProject.MyView"
         android:layout_width="200dp"
         android:layout_height="200dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="5dp"
         android:padding="0dp"
         android:paddingHorizontal="20dp"
 
-        app:shapeColor="@color/teal_200"
-        app:strokeColor="@color/teal_700"
+        app:compareInnerWithOuter="false"
+        app:innerPaddingBottom="30dp"
 
         app:innerPaddingTop="30dp"
-        app:innerPaddingBottom="30dp"
         app:outerRadius="20dp"
-        app:compareInnerWithOuter="false"
+        app:shapeColor="@color/teal_200"
+        app:strokeColor="@color/teal_700"
 
         />
 
     <com.edu.customview.CustomShapeView
         android:id="@+id/customShapeView2"
-        android:layout_alignParentEnd="true"
         style="@style/Widget.Theme.CustomViewProject.MyView"
         android:layout_width="200dp"
         android:layout_height="200dp"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="5dp"
         android:padding="0dp"
         android:paddingHorizontal="20dp"
 
+        app:innerRadiusBottomRight="10dp"
+        app:innerRadiusTopLeft="10dp"
+        app:outerRadiusBottomRight="10dp"
+
+        app:outerRadiusTopLeft="10dp"
+        app:radius="100dp"
         app:shapeColor="@color/orange_300"
         app:strokeColor="@color/orange_400"
         app:strokeWidth="7dp"
-
-        app:radius="100dp"
-        app:innerRadiusBottomRight="10dp"
-        app:outerRadiusBottomRight="10dp"
-        app:innerRadiusTopLeft="10dp"
-        app:outerRadiusTopLeft="10dp"
 
 
         />
