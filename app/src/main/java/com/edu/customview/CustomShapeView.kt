@@ -1,183 +1,260 @@
 package com.edu.customview
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
-import android.graphics.drawable.Drawable
-import android.text.TextPaint
+import android.graphics.*
 import android.util.AttributeSet
+import android.util.DisplayMetrics
 import android.view.View
-import kotlin.experimental.and
-import kotlin.experimental.or
+import kotlin.math.max
 
 
-/**
- * TODO: document your custom view class.
- */
-class CustomShapeView : View {
-    object Corners {
-        const val NONE: Int = 1
-        const val TOP_LEFT = 2
-        const val TOP_RIGHT = 4
-        const val BOTTOM_LEFT = 8
-        const val BOTTOM_RIGHT = 16
-
-        val TOP = (TOP_LEFT or TOP_RIGHT)
-        val BOTTOM = (BOTTOM_LEFT or BOTTOM_RIGHT)
-        val LEFT = (TOP_LEFT or BOTTOM_LEFT)
-        val RIGHT = (TOP_RIGHT or BOTTOM_RIGHT)
-
-        val ALL = (TOP_LEFT or TOP_RIGHT or BOTTOM_RIGHT or BOTTOM_LEFT)
-    }
+class CustomShapeView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyle: Int = 0
+): View(context, attrs, defStyle) {
+//    object Corners {
+//        const val NONE: Int = 1
+//        const val TOP_LEFT = 2
+//        const val TOP_RIGHT = 4
+//        const val BOTTOM_LEFT = 8
+//        const val BOTTOM_RIGHT = 16
+//
+//        val TOP = (TOP_LEFT or TOP_RIGHT)
+//        val BOTTOM = (BOTTOM_LEFT or BOTTOM_RIGHT)
+//        val LEFT = (TOP_LEFT or BOTTOM_LEFT)
+//        val RIGHT = (TOP_RIGHT or BOTTOM_RIGHT)
+//
+//        val ALL = (TOP_LEFT or TOP_RIGHT or BOTTOM_RIGHT or BOTTOM_LEFT)
+//    }
 
     private var _strokeWidth = 0f
     private var _strokeColor = Color.BLACK
-    private var _cornerRadius = 0f
-    private var _corners: Int = Corners.NONE
+
+    var defaultRadius: Float = 0f
+    var defaultOuterRadius: Float = defaultRadius
+    var defaultInnerRadius: Float = defaultRadius
+
+    private var _shapeColor = Color.WHITE
+    private var _innerRadius = ShapeRadius(defaultOuterRadius)
+    private var _outerRadius = ShapeRadius(defaultInnerRadius)
+
+
+    private var innerPath: Path = Path()
+    private var outerPath: Path = Path()
+
+    private lateinit var paint: Paint
+    private var metric = DisplayMetrics()
+
+    private var rectF: RectF = RectF()
+    private var useAsIs: Boolean = false
+
+    private var innerPadding: Float = 0f
+    private var innerPaddingTop: Float = 0f
+    private var innerPaddingBottom: Float = 0f
+    private var innerPaddingLeft: Float = 0f
+    private var innerPaddingRight: Float = 0f
+
+
+    class ShapeRadius constructor(
+        var topLeft: Float,
+        var topRight: Float,
+        var bottomLeft: Float,
+        var bottomRight: Float
+    ) {
+        constructor(radius: Float) : this(radius, radius, radius, radius)
+
+        init {
+            topLeft = normalizeValue(topLeft)
+            topRight = normalizeValue(topRight)
+            bottomLeft = normalizeValue(bottomLeft)
+            bottomRight = normalizeValue(bottomRight)
+        }
+
+        private fun normalizeValue(value: Float): Float = if (value <= 0) 0f else value
+    }
 
     var strokeWidth: Float
         get() = _strokeWidth
         set(value) {
             _strokeWidth = value
-            invalidateTextPaintAndMeasurements()
-        }
-
-    var corners: Int
-        get() = _corners
-        set(value) {
-            _corners = value
+            updateShapeMeasurements()
         }
 
     var strokeColor: Int
         get() = _strokeColor
         set(value) {
             _strokeColor = value
-            invalidateTextPaintAndMeasurements()
+            updateShapeMeasurements()
         }
 
-    var cornerRadius: Float
-        get() = _cornerRadius
+    var shapeColor: Int
+        get() = _shapeColor
         set(value) {
-            _cornerRadius = value
-            invalidateTextPaintAndMeasurements()
+            _shapeColor = value
+            updateShapeMeasurements()
         }
 
-    /**
-     * In the example view, this drawable is drawn above the text.
-     */
-    var exampleDrawable: Drawable? = null
+    var outerRadius: ShapeRadius
+        get() = _outerRadius
+        private set(value) = setOuterCornerRadius(value)
 
-    constructor(context: Context) : super(context) {
-        init(null, 0)
+
+    var innerRadius: ShapeRadius
+        get() = _innerRadius
+        private set(value) = setInnerCornerRadius(value)
+
+
+    fun setOuterCornerRadius(topLeft: Float, topRight: Float, bottomLeft: Float, bottomRight: Float){
+        val shapeRadius = ShapeRadius(topLeft, topRight, bottomLeft, bottomRight)
+        setOuterCornerRadius(shapeRadius)
     }
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(attrs, 0)
+    fun setOuterCornerRadius(radius: Float){
+        setOuterCornerRadius(radius, radius, radius, radius)
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
-        context,
-        attrs,
-        defStyle
-    ) {
+    fun setOuterCornerRadius(shapeRadius: ShapeRadius){
+        _outerRadius = shapeRadius
+        updateShapeMeasurements()
+    }
+
+    fun setInnerCornerRadius(topLeft: Float, topRight: Float, bottomLeft: Float, bottomRight: Float){
+        val shapeRadius = ShapeRadius(topLeft, topRight, bottomLeft, bottomRight)
+        setInnerCornerRadius(shapeRadius)
+    }
+
+    fun setInnerCornerRadius(radius: Float){
+        setInnerCornerRadius(radius, radius, radius, radius)
+    }
+
+    fun setInnerCornerRadius(shapeRadius: ShapeRadius){
+        _innerRadius = shapeRadius
+        updateShapeMeasurements()
+    }
+
+    fun updateShapeMeasurements(){
+
+    }
+
+    init {
         init(attrs, defStyle)
     }
+
+
     // Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
     // values that should fall on pixel boundaries.
 
     private fun init(attrs: AttributeSet?, defStyle: Int) {
         // Load attributes
+
+        paint = Paint()
         val a = context.obtainStyledAttributes(
             attrs, R.styleable.CustomShapeView, defStyle, 0
         ).apply {
             try {
-                cornerRadius = getFloat(R.styleable.CustomShapeView_cornerRadius, -1f)
-                strokeWidth = getDimension(R.styleable.CustomShapeView_strokeColor, 0f)
+
+                // innerRadius = ShapeRadius(getDimension(R.styleable.CustomShapeView_innerRadius, 0f))
+                defaultRadius = getDimension(R.styleable.CustomShapeView_radius, 0f)
+                defaultOuterRadius = getDimension(R.styleable.CustomShapeView_outerRadius, defaultRadius)
+                defaultInnerRadius = getDimension(R.styleable.CustomShapeView_innerRadius, defaultRadius)
+                outerRadius = ShapeRadius(defaultOuterRadius)
+                outerRadius.topLeft = getDimension(R.styleable.CustomShapeView_outerRadiusTopLeft, defaultOuterRadius)
+                outerRadius.topRight = getDimension(R.styleable.CustomShapeView_outerRadiusTopRight, defaultOuterRadius)
+                outerRadius.bottomLeft = getDimension(R.styleable.CustomShapeView_outerRadiusBottomLeft, defaultOuterRadius)
+                outerRadius.bottomRight = getDimension(R.styleable.CustomShapeView_outerRadiusBottomRight, defaultOuterRadius)
+
+                innerRadius = ShapeRadius(defaultOuterRadius)
+                innerRadius.topLeft = getDimension(R.styleable.CustomShapeView_innerRadiusTopLeft, defaultInnerRadius)
+                innerRadius.topRight = getDimension(R.styleable.CustomShapeView_innerRadiusTopRight, defaultInnerRadius)
+                innerRadius.bottomLeft = getDimension(R.styleable.CustomShapeView_innerRadiusBottomLeft, defaultInnerRadius)
+                innerRadius.bottomRight = getDimension(R.styleable.CustomShapeView_innerRadiusBottomRight, defaultInnerRadius)
+
+                shapeColor = getColor(R.styleable.CustomShapeView_shapeColor, Color.WHITE)
+
+                strokeWidth = getDimension(R.styleable.CustomShapeView_strokeWidth, 0f)
                 strokeColor = getColor(R.styleable.CustomShapeView_strokeColor, Color.BLACK)
-                corners = getInteger(R.styleable.CustomShapeView_corners, Corners.NONE)
+
+                innerPadding = getDimension(R.styleable.CustomShapeView_innerPadding, 0f)
+                innerPaddingTop = getDimension(R.styleable.CustomShapeView_innerPaddingTop, innerPadding)
+                innerPaddingBottom = getDimension(R.styleable.CustomShapeView_innerPaddingBottom, innerPadding)
+                innerPaddingLeft = getDimension(R.styleable.CustomShapeView_innerPaddingLeft, innerPadding)
+                innerPaddingRight = getDimension(R.styleable.CustomShapeView_innerPaddingRight, innerPadding)
+
+                useAsIs = getBoolean(R.styleable.CustomShapeView_useAsIs, false)
+                if (!useAsIs)
+                    normalizeInnerWithOuterRadius()
 
             } finally {
                 recycle()
             }
         }
-
-
-        if (a.hasValue(R.styleable.CustomShapeView_exampleDrawable)) {
-            exampleDrawable = a.getDrawable(
-                R.styleable.CustomShapeView_exampleDrawable
-            )
-            exampleDrawable?.callback = this
-        }
-
-        a.recycle()
     }
 
-    private fun invalidateTextPaintAndMeasurements() {
-        textPaint.let {
-            it.textSize = exampleDimension
-            it.color = exampleColor
-            textWidth = it.measureText(exampleString)
-            textHeight = it.fontMetrics.bottom
-        }
+    private fun normalizeInnerWithOuterRadius(){
+        _innerRadius.topLeft = max(_innerRadius.topLeft, outerRadius.topLeft)
+        _innerRadius.topRight = max(_innerRadius.topRight, outerRadius.topRight)
+        _innerRadius.bottomLeft = max(_innerRadius.bottomLeft, outerRadius.bottomLeft)
+        _innerRadius.bottomRight = max(_innerRadius.bottomRight, outerRadius.bottomRight)
     }
+
 
     override fun onDraw(canvas: Canvas) {
+        //Get the pixel density of the current mobile device
+        display.getRealMetrics(metric)
+        val mDensity = metric.density
+        // qCalculate the border thickness value
+        val thickness: Float = strokeWidth * mDensity
+
+        rectF.left = 0f
+        rectF.top = 0f
+        rectF.right = width.toFloat()
+        rectF.bottom = height.toFloat()
+
+        paint.color = strokeColor
+
+        // outerPath.addRoundRect(RectF(0f, 0f, width.toFloat(), height.toFloat()), getOuterCornersFloatArray(), Path.Direction.CW)
+        outerPath.addRoundRect(rectF, getOuterCornersFloatArray(), Path.Direction.CW)
+        canvas.drawPath(outerPath, paint)
+
+
+        // Stroke width
+        rectF.left = thickness
+        rectF.top = thickness
+        rectF.right = width - thickness
+        rectF.bottom = height - thickness
+
+        // Paddings
+        rectF.left += innerPaddingLeft
+        rectF.top += innerPaddingTop
+        rectF.right -= innerPaddingRight
+        rectF.bottom -= innerPaddingBottom
+
+        paint.color = shapeColor
+
+        // innerPath.addRoundRect(RectF(thickness, thickness, width-thickness, height-thickness), getInnerCornersFloatArray(), Path.Direction.CW)
+        innerPath.addRoundRect(rectF, getInnerCornersFloatArray(), Path.Direction.CW)
+        canvas.drawPath(innerPath, paint)
+
         super.onDraw(canvas)
+    }
 
-        // TODO: consider storing these as member variables to reduce
-        // allocations per draw cycle.
-        val paddingLeft = paddingLeft
-        val paddingTop = paddingTop
-        val paddingRight = paddingRight
-        val paddingBottom = paddingBottom
+    private fun getInnerCornersFloatArray(): FloatArray {
+        return floatArrayOf(
+            innerRadius.topLeft, innerRadius.topLeft,   // Top left radius in px
+            innerRadius.topRight, innerRadius.topRight,   // Top right radius in px
+            innerRadius.bottomRight, innerRadius.bottomRight,     // Bottom right radius in px
+            innerRadius.bottomLeft, innerRadius.bottomLeft      // Bottom left radius in px
 
-        val contentWidth = width - paddingLeft - paddingRight
-        val contentHeight = height - paddingTop - paddingBottom
-        val paint = Paint()
-        paint.isAntiAlias = true
-
-        var topLeft = 0f
-        var topRight= 0f
-        var bottomRight= 0f
-        var bottomLeft = 0f
-
-        if (Flags.hasFlag(corners, Corners.TOP_LEFT))
-            topLeft = cornerRadius
-        if (Flags.hasFlag(corners, Corners.TOP_RIGHT))
-            topRight = cornerRadius
-        if (Flags.hasFlag(corners, Corners.BOTTOM_RIGHT))
-            bottomRight = cornerRadius
-        if (Flags.hasFlag(corners, Corners.BOTTOM_LEFT))
-            bottomLeft = cornerRadius
-
-
-
-        canvas.drawRoundRect(
-            RectF(0f, 0f, contentWidth.toFloat(), contentHeight.toFloat()),
-            80f,
-            80f,
-            paint
+        )
+    }
+    private fun getOuterCornersFloatArray(): FloatArray{
+        return floatArrayOf(
+            outerRadius.topLeft, outerRadius.topLeft,   // Top left radius in px
+            outerRadius.topRight, outerRadius.topRight,   // Top right radius in px
+            outerRadius.bottomRight, outerRadius.bottomRight,     // Bottom right radius in px
+            outerRadius.bottomLeft, outerRadius.bottomLeft      // Bottom left radius in px
         )
 
-        exampleString?.let {
-            // Draw the text.
-            canvas.drawText(
-                it,
-                paddingLeft + (contentWidth - textWidth) / 2,
-                paddingTop + (contentHeight + textHeight) / 2,
-                textPaint
-            )
-        }
-
-        // Draw the example drawable on top of the text.
-        exampleDrawable?.let {
-            it.setBounds(
-                paddingLeft, paddingTop,
-                paddingLeft + contentWidth, paddingTop + contentHeight
-            )
-            it.draw(canvas)
-        }
     }
 }

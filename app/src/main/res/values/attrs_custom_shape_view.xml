@@ -1,17 +1,33 @@
 <resources>
     <declare-styleable name="CustomShapeView">
-        <attr name="exampleString" format="string" />
-        <attr name="exampleDimension" format="dimension" />
-        <attr name="exampleColor" format="color" />
-        <attr name="exampleDrawable" format="color|reference" />
-
 
         <attr name="strokeWidth" format="dimension"/>
         <attr name="strokeColor" format="color"/>
+        <attr name="shapeColor" format="color"/>
 
-        <attr name="cornerRadius" format="dimension"/>
+        <attr name="radius" format="dimension"/>
+        <attr name="useAsIs" format="boolean"/>
+        <attr name="innerRadius" format="dimension"/>
+        <attr name="innerRadiusTopLeft" format="dimension"/>
+        <attr name="innerRadiusTopRight" format="dimension"/>
+        <attr name="innerRadiusBottomLeft" format="dimension"/>
+        <attr name="innerRadiusBottomRight" format="dimension"/>
 
-        <attr name="corners" format="flags">
+
+        <attr name="outerRadius" format="dimension"/>
+        <attr name="outerRadiusTopLeft" format="dimension"/>
+        <attr name="outerRadiusTopRight" format="dimension"/>
+        <attr name="outerRadiusBottomLeft" format="dimension"/>
+        <attr name="outerRadiusBottomRight" format="dimension"/>
+
+        <attr name="innerPadding" format="dimension"/>
+        <attr name="innerPaddingTop" format="dimension"/>
+        <attr name="innerPaddingBottom" format="dimension"/>
+        <attr name="innerPaddingLeft" format="dimension"/>
+        <attr name="innerPaddingRight" format="dimension"/>
+
+
+        <!--<attr name="corners" format="flags">
             <flag name="none" value="1"/>
 
             <flag name="topLeft" value="2"/>
@@ -25,17 +41,7 @@
             <flag name="bottom" value="24"/>
 
             <flag name="all" value="30"/>
-
-            <flag name="all" value="0"/>
-            <flag name="top" value="1"/>
-            <flag name="bottom" value="2"/>
-            <flag name="left" value="3"/>
-            <flag name="right" value="4"/>
-            <flag name="topLeft" value="5"/>
-            <flag name="topRight" value="6"/>
-            <flag name="bottomLeft" value="7"/>
-            <flag name="bottomRight" value="8"/>
-        </attr>
+        </attr>-->
         
     </declare-styleable>
 
