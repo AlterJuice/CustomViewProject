@@ -6,7 +6,7 @@
         <attr name="shapeColor" format="color"/>
 
         <attr name="radius" format="dimension"/>
-        <attr name="useAsIs" format="boolean"/>
+        <attr name="compareInnerWithOuter" format="boolean"/>
         <attr name="innerRadius" format="dimension"/>
         <attr name="innerRadiusTopLeft" format="dimension"/>
         <attr name="innerRadiusTopRight" format="dimension"/>

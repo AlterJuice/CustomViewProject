@@ -35,7 +35,7 @@ class CustomShapeView @JvmOverloads constructor(
     private var metric = DisplayMetrics()
 
     private var rectF: RectF = RectF()
-    private var useAsIs: Boolean = false
+    private var compareInnerWithOuter: Boolean = false
 
     private var innerPadding: Float = 0f
     private var innerPaddingTop: Float = 0f
@@ -169,9 +169,10 @@ class CustomShapeView @JvmOverloads constructor(
                 innerPaddingLeft = getDimension(R.styleable.CustomShapeView_innerPaddingLeft, innerPadding)
                 innerPaddingRight = getDimension(R.styleable.CustomShapeView_innerPaddingRight, innerPadding)
 
-                useAsIs = getBoolean(R.styleable.CustomShapeView_useAsIs, false)
-                if (!useAsIs)
+                compareInnerWithOuter = getBoolean(R.styleable.CustomShapeView_compareInnerWithOuter, false)
+                if (compareInnerWithOuter) {
                     normalizeInnerWithOuterRadius()
+                }
 
             } finally {
                 recycle()
@@ -223,7 +224,6 @@ class CustomShapeView @JvmOverloads constructor(
         rectF.bottom -= innerPaddingBottom
 
         paint.color = shapeColor
-
         // innerPath.addRoundRect(RectF(thickness, thickness, width-thickness, height-thickness), getInnerCornersFloatArray(), Path.Direction.CW)
         innerPath.addRoundRect(rectF, getInnerCornersFloatArray(), Path.Direction.CW)
         canvas.drawPath(innerPath, paint)
