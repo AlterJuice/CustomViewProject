@@ -6,16 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.edu.customview.CustomLinearLayout
-        android:id="@+id/customList"
-        android:layout_alignParentTop="true"
+    <ScrollView
         android:layout_width="match_parent"
-        android:background="@color/gray_400"
+        android:layout_height="wrap_content"
         android:layout_above="@id/customShapeView"
+        android:layout_alignParentTop="true"
         android:layout_margin="10dp"
-        android:layout_height="wrap_content">
+        android:background="@color/gray_400">
 
-    </com.edu.customview.CustomLinearLayout>
+        <com.edu.customview.CustomLinearLayout
+            android:id="@+id/customList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </com.edu.customview.CustomLinearLayout>
+    </ScrollView>
 
     <com.edu.customview.CustomShapeView
         android:id="@+id/customShapeView"
@@ -25,18 +30,18 @@
         android:layout_height="300dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:paddingHorizontal="20dp"
         android:layout_margin="5dp"
+        android:padding="0dp"
+        android:paddingHorizontal="20dp"
+
+
         android:paddingBottom="40dp"
 
 
-        android:padding="0dp"
-
-
+        app:innerPaddingBottom="40dp"
+        app:innerPaddingTop="40dp"
         app:innerRadius="0dp"
         app:outerRadius="20dp"
-        app:innerPaddingTop="40dp"
-        app:innerPaddingBottom="40dp"
 
         app:shapeColor="@color/teal_200"
         app:strokeColor="@color/teal_700"
