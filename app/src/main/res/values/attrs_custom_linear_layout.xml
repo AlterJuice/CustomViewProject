@@ -1,0 +1,4 @@
+<resources>
+    <declare-styleable name="CustomLinearLayout">
+    </declare-styleable>
+</resources>

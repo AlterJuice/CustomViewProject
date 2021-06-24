@@ -6,14 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <com.edu.customview.CustomLinearLayout
+        android:id="@+id/customList"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:background="@color/gray_400"
+        android:layout_above="@id/customShapeView"
+        android:layout_margin="10dp"
+        android:layout_height="wrap_content">
+
+    </com.edu.customview.CustomLinearLayout>
 
     <com.edu.customview.CustomShapeView
+        android:id="@+id/customShapeView"
+
         style="@style/Widget.Theme.CustomViewProject.MyView"
         android:layout_width="300dp"
-        android:layout_height="500dp"
-        android:layout_centerInParent="true"
+        android:layout_height="300dp"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:paddingHorizontal="20dp"
+        android:layout_margin="5dp"
         android:paddingBottom="40dp"
 
 
@@ -30,5 +43,6 @@
         app:useAsIs="true"
 
         />
+
 
 </RelativeLayout>
