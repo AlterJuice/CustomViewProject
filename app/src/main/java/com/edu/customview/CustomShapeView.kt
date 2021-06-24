@@ -197,10 +197,10 @@ class CustomShapeView @JvmOverloads constructor(
 
 
         // creating outer shape with sizes
-        rectF.left = 0f
-        rectF.top = 0f
-        rectF.right = width.toFloat()
-        rectF.bottom = height.toFloat()
+        rectF.left = paddingLeft.toFloat()
+        rectF.top = paddingTop.toFloat()
+        rectF.right = width.toFloat() - paddingRight
+        rectF.bottom = height.toFloat() - paddingBottom
 
         paint.color = strokeColor
 
@@ -210,12 +210,11 @@ class CustomShapeView @JvmOverloads constructor(
         outerPath.addRoundRect(rectF, getOuterCornersFloatArray(), Path.Direction.CW)
         canvas.drawPath(outerPath, paint)
 
-
         // Stroke width
-        rectF.left = thickness
-        rectF.top = thickness
-        rectF.right = width - thickness
-        rectF.bottom = height - thickness
+        rectF.left = thickness + paddingLeft
+        rectF.top = thickness + paddingTop
+        rectF.right = width - thickness - paddingRight
+        rectF.bottom = height - thickness - paddingBottom
 
         // Paddings
         rectF.left += innerPaddingLeft
