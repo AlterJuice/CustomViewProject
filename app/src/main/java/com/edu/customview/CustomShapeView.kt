@@ -13,20 +13,8 @@ class CustomShapeView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ): View(context, attrs, defStyle) {
-//    object Corners {
-//        const val NONE: Int = 1
-//        const val TOP_LEFT = 2
-//        const val TOP_RIGHT = 4
-//        const val BOTTOM_LEFT = 8
-//        const val BOTTOM_RIGHT = 16
-//
-//        val TOP = (TOP_LEFT or TOP_RIGHT)
-//        val BOTTOM = (BOTTOM_LEFT or BOTTOM_RIGHT)
-//        val LEFT = (TOP_LEFT or BOTTOM_LEFT)
-//        val RIGHT = (TOP_RIGHT or BOTTOM_RIGHT)
-//
-//        val ALL = (TOP_LEFT or TOP_RIGHT or BOTTOM_RIGHT or BOTTOM_LEFT)
-//    }
+    // passing arguments into view on place
+
 
     private var _strokeWidth = 0f
     private var _strokeColor = Color.BLACK
@@ -206,6 +194,8 @@ class CustomShapeView @JvmOverloads constructor(
         // qCalculate the border thickness value
         val thickness: Float = strokeWidth * mDensity
 
+
+        // creating outer shape with sizes
         rectF.left = 0f
         rectF.top = 0f
         rectF.right = width.toFloat()
@@ -214,6 +204,8 @@ class CustomShapeView @JvmOverloads constructor(
         paint.color = strokeColor
 
         // outerPath.addRoundRect(RectF(0f, 0f, width.toFloat(), height.toFloat()), getOuterCornersFloatArray(), Path.Direction.CW)
+
+        // painting outer shape into outerPath and adding to canvas
         outerPath.addRoundRect(rectF, getOuterCornersFloatArray(), Path.Direction.CW)
         canvas.drawPath(outerPath, paint)
 
