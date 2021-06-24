@@ -14,13 +14,14 @@
         android:layout_marginBottom="50dp"
 
         android:background="@color/gray_400">
-
         <com.edu.customview.CustomLinearLayout
             android:id="@+id/customList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
         </com.edu.customview.CustomLinearLayout>
+
+
     </ScrollView>
 
     <com.edu.customview.CustomShapeView

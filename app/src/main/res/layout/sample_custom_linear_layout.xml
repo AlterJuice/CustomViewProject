@@ -4,10 +4,14 @@
     android:layout_height="match_parent">
 
     <com.edu.customview.CustomLinearLayout
+        android:background="@color/gray_400"
         style="@style/Widget.Theme.CustomViewProject.MyView"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:paddingLeft="20dp"
-        android:paddingBottom="40dp" />
+
+        android:paddingBottom="40dp" >
+
+    </com.edu.customview.CustomLinearLayout>
 
 </FrameLayout>

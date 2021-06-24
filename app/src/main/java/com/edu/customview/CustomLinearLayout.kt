@@ -3,12 +3,12 @@ package com.edu.customview
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Paint
-import android.text.TextPaint
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.children
 import androidx.core.view.setPadding
 
 
@@ -18,7 +18,6 @@ class CustomLinearLayout@JvmOverloads constructor(
     defStyle: Int = 0
 ): LinearLayout(context, attrs, defStyle) {
 
-    private lateinit var textPaint: TextPaint
 
 
     fun addItem(text: String){
@@ -28,19 +27,21 @@ class CustomLinearLayout@JvmOverloads constructor(
 
     private fun generateTextView(text: String): TextView{
         val textView = TextView(context)
-        with(textView){
-            setText(text)
-            setBackgroundColor(Color.parseColor("#000000"))
-            setTextColor(Color.parseColor("#ffffffff"))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-            val px = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                4f,
-                resources.displayMetrics
-            )
-            textView.setPadding(px.toInt())
-        }
+        configureTextView(textView, text)
         return textView
+    }
+
+    private fun configureTextView(textView: TextView, text: String){
+        textView.text = text
+        textView.setBackgroundColor(Color.parseColor("#000000"))
+        textView.setTextColor(Color.parseColor("#ffffffff"))
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+        val px = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            4f,
+            resources.displayMetrics
+        )
+        textView.setPadding(px.toInt())
     }
 
     init {
