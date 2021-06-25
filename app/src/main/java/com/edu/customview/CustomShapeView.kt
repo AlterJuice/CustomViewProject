@@ -15,23 +15,21 @@ class CustomShapeView @JvmOverloads constructor(
 ): View(context, attrs, defStyle) {
     // passing arguments into view on place
 
+    private var strokeWidth = 0f
+    private var strokeColor = Color.BLACK
 
-    private var _strokeWidth = 0f
-    private var _strokeColor = Color.BLACK
+    private var defaultRadius: Float = 0f
+    private var defaultOuterRadius: Float = defaultRadius
+    private var defaultInnerRadius: Float = defaultRadius
 
-    var defaultRadius: Float = 0f
-    var defaultOuterRadius: Float = defaultRadius
-    var defaultInnerRadius: Float = defaultRadius
-
-    private var _shapeColor = Color.WHITE
-    private var _innerRadius = ShapeRadius(defaultOuterRadius)
-    private var _outerRadius = ShapeRadius(defaultInnerRadius)
-
+    private var shapeColor = Color.WHITE
+    private var innerRadius = ShapeRadius(defaultOuterRadius)
+    private var outerRadius = ShapeRadius(defaultInnerRadius)
 
     private var innerPath: Path = Path()
     private var outerPath: Path = Path()
 
-    private lateinit var paint: Paint
+    private var paint: Paint = Paint()
     private var metric = DisplayMetrics()
 
     private var rectF: RectF = RectF()
@@ -44,94 +42,18 @@ class CustomShapeView @JvmOverloads constructor(
     private var innerPaddingRight: Float = 0f
 
 
-    class ShapeRadius constructor(
-        var topLeft: Float,
-        var topRight: Float,
-        var bottomLeft: Float,
-        var bottomRight: Float
-    ) {
-        constructor(radius: Float) : this(radius, radius, radius, radius)
+    init { init(attrs, defStyle) }
 
-        init {
-            topLeft = normalizeValue(topLeft)
-            topRight = normalizeValue(topRight)
-            bottomLeft = normalizeValue(bottomLeft)
-            bottomRight = normalizeValue(bottomRight)
-        }
-
-        private fun normalizeValue(value: Float): Float = if (value <= 0) 0f else value
-    }
-
-    var strokeWidth: Float
-        get() = _strokeWidth
-        set(value) { _strokeWidth = value }
-
-    var strokeColor: Int
-        get() = _strokeColor
-        set(value) { _strokeColor = value }
-
-    var shapeColor: Int
-        get() = _shapeColor
-        set(value) { _shapeColor = value }
-
-    var outerRadius: ShapeRadius
-        get() = _outerRadius
-        private set(value) = setOuterCornerRadius(value)
-
-
-    var innerRadius: ShapeRadius
-        get() = _innerRadius
-        private set(value) = setInnerCornerRadius(value)
-
-
-    fun setOuterCornerRadius(topLeft: Float, topRight: Float, bottomLeft: Float, bottomRight: Float){
-        val shapeRadius = ShapeRadius(topLeft, topRight, bottomLeft, bottomRight)
-        setOuterCornerRadius(shapeRadius)
-    }
-
-    fun setOuterCornerRadius(radius: Float){
-        setOuterCornerRadius(radius, radius, radius, radius)
-    }
-
-    fun setOuterCornerRadius(shapeRadius: ShapeRadius){
-        _outerRadius = shapeRadius
-    }
-
-    fun setInnerCornerRadius(topLeft: Float, topRight: Float, bottomLeft: Float, bottomRight: Float){
-        val shapeRadius = ShapeRadius(topLeft, topRight, bottomLeft, bottomRight)
-        setInnerCornerRadius(shapeRadius)
-    }
-
-    fun setInnerCornerRadius(radius: Float){
-        setInnerCornerRadius(radius, radius, radius, radius)
-    }
-
-    fun setInnerCornerRadius(shapeRadius: ShapeRadius){
-        _innerRadius = shapeRadius
-    }
-
-
-    init {
-        init(attrs, defStyle)
-    }
-
-
-    // Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
-    // values that should fall on pixel boundaries.
 
     private fun init(attrs: AttributeSet?, defStyle: Int) {
-        // Load attributes
-
-        paint = Paint()
         val a = context.obtainStyledAttributes(
             attrs, R.styleable.CustomShapeView, defStyle, 0
         ).apply {
             try {
-
-                // innerRadius = ShapeRadius(getDimension(R.styleable.CustomShapeView_innerRadius, 0f))
                 defaultRadius = getDimension(R.styleable.CustomShapeView_radius, 0f)
                 defaultOuterRadius = getDimension(R.styleable.CustomShapeView_outerRadius, defaultRadius)
                 defaultInnerRadius = getDimension(R.styleable.CustomShapeView_innerRadius, defaultRadius)
+
                 outerRadius = ShapeRadius(defaultOuterRadius)
                 outerRadius.topLeft = getDimension(R.styleable.CustomShapeView_outerRadiusTopLeft, defaultOuterRadius)
                 outerRadius.topRight = getDimension(R.styleable.CustomShapeView_outerRadiusTopRight, defaultOuterRadius)
@@ -166,11 +88,38 @@ class CustomShapeView @JvmOverloads constructor(
         }
     }
 
-    private fun normalizeInnerWithOuterRadius(){
-        _innerRadius.topLeft = max(_innerRadius.topLeft, outerRadius.topLeft)
-        _innerRadius.topRight = max(_innerRadius.topRight, outerRadius.topRight)
-        _innerRadius.bottomLeft = max(_innerRadius.bottomLeft, outerRadius.bottomLeft)
-        _innerRadius.bottomRight = max(_innerRadius.bottomRight, outerRadius.bottomRight)
+    fun setOuterCornerRadius(topLeft: Float, topRight: Float, bottomLeft: Float, bottomRight: Float){
+        val shapeRadius = ShapeRadius(topLeft, topRight, bottomLeft, bottomRight)
+        setOuterCornerRadius(shapeRadius)
+    }
+
+    fun setOuterCornerRadius(radius: Float){
+        setOuterCornerRadius(radius, radius, radius, radius)
+    }
+
+    fun setOuterCornerRadius(shapeRadius: ShapeRadius){
+        outerRadius = shapeRadius
+        invalidate()
+    }
+
+    fun setInnerCornerRadius(topLeft: Float, topRight: Float, bottomLeft: Float, bottomRight: Float){
+        val shapeRadius = ShapeRadius(topLeft, topRight, bottomLeft, bottomRight)
+        setInnerCornerRadius(shapeRadius)
+    }
+
+    fun setInnerCornerRadius(radius: Float){
+        setInnerCornerRadius(radius, radius, radius, radius)
+    }
+
+    fun setInnerCornerRadius(shapeRadius: ShapeRadius){
+        innerRadius = shapeRadius
+        invalidate()
+    }
+
+    fun setUpStrokeConfigs(strokeColor: Int, strokeWidth: Float){
+        this.strokeColor = strokeColor
+        this.strokeWidth = strokeWidth
+        invalidate()
     }
 
 
@@ -190,8 +139,6 @@ class CustomShapeView @JvmOverloads constructor(
 
         paint.color = strokeColor
 
-        // outerPath.addRoundRect(RectF(0f, 0f, width.toFloat(), height.toFloat()), getOuterCornersFloatArray(), Path.Direction.CW)
-
         // painting outer shape into outerPath and adding to canvas
         outerPath.addRoundRect(rectF, getOuterCornersFloatArray(), Path.Direction.CW)
         canvas.drawPath(outerPath, paint)
@@ -209,12 +156,19 @@ class CustomShapeView @JvmOverloads constructor(
         rectF.bottom -= innerPaddingBottom
 
         paint.color = shapeColor
-        // innerPath.addRoundRect(RectF(thickness, thickness, width-thickness, height-thickness), getInnerCornersFloatArray(), Path.Direction.CW)
         innerPath.addRoundRect(rectF, getInnerCornersFloatArray(), Path.Direction.CW)
         canvas.drawPath(innerPath, paint)
 
         super.onDraw(canvas)
     }
+
+    private fun normalizeInnerWithOuterRadius(){
+        innerRadius.topLeft = max(innerRadius.topLeft, outerRadius.topLeft)
+        innerRadius.topRight = max(innerRadius.topRight, outerRadius.topRight)
+        innerRadius.bottomLeft = max(innerRadius.bottomLeft, outerRadius.bottomLeft)
+        innerRadius.bottomRight = max(innerRadius.bottomRight, outerRadius.bottomRight)
+    }
+
 
     private fun getInnerCornersFloatArray(): FloatArray {
         return floatArrayOf(
@@ -227,11 +181,20 @@ class CustomShapeView @JvmOverloads constructor(
     }
     private fun getOuterCornersFloatArray(): FloatArray{
         return floatArrayOf(
-            outerRadius.topLeft, outerRadius.topLeft,   // Top left radius in px
-            outerRadius.topRight, outerRadius.topRight,   // Top right radius in px
-            outerRadius.bottomRight, outerRadius.bottomRight,     // Bottom right radius in px
-            outerRadius.bottomLeft, outerRadius.bottomLeft      // Bottom left radius in px
+            outerRadius.topLeft, outerRadius.topLeft,
+            outerRadius.topRight, outerRadius.topRight,
+            outerRadius.bottomRight, outerRadius.bottomRight,
+            outerRadius.bottomLeft, outerRadius.bottomLeft
         )
 
+    }
+    class ShapeRadius constructor(
+        var topLeft: Float,
+        var topRight: Float,
+        var bottomLeft: Float,
+        var bottomRight: Float
+    ) {
+        constructor(radius: Float) : this(radius, radius, radius, radius)
+        private fun normalizeValue(value: Float): Float = if (value <= 0) 0f else value
     }
 }

@@ -23,6 +23,10 @@ class CustomLinearLayout@JvmOverloads constructor(
 ): LinearLayout(context, attrs, defStyle) {
 
 
+    init {
+        init(attrs, defStyle)
+        orientation = VERTICAL
+    }
 
     fun addItem(text: String){
         val textView = generateTextView(text)
@@ -43,34 +47,12 @@ class CustomLinearLayout@JvmOverloads constructor(
         textView.setPadding(4.dp)
     }
 
-    init {
-        init(attrs, defStyle)
-        orientation = VERTICAL
-    }
-
 
     private fun init(attrs: AttributeSet?, defStyle: Int) {
-        // Load attributes
         val a = context.obtainStyledAttributes(
             attrs, R.styleable.CustomLinearLayout, defStyle, 0
         )
-
         a.recycle()
-    }
-
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-
-/*        // TODO: consider storing these as member variables to reduce
-        // allocations per draw cycle.
-        val paddingLeft = paddingLeft
-        val paddingTop = paddingTop
-        val paddingRight = paddingRight
-        val paddingBottom = paddingBottom
-
-        val contentWidth = width - paddingLeft - paddingRight
-        val contentHeight = height - paddingTop - paddingBottom*/
     }
 
 }
