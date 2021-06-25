@@ -1,15 +1,12 @@
 package com.edu.customview
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.edu.customview.databinding.ActivityMainBinding
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_main)
 
         val textViewLinear = findViewById<CustomLinearLayout>(R.id.customList)
         textViewLinear.addItem("One")

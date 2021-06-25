@@ -1,6 +1,7 @@
 package com.edu.customview
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
 import android.util.AttributeSet
@@ -12,6 +13,8 @@ import androidx.core.view.children
 import androidx.core.view.marginTop
 import androidx.core.view.setPadding
 
+val Int.dp
+    get() = (Resources.getSystem().displayMetrics.density * this).toInt()
 
 class CustomLinearLayout@JvmOverloads constructor(
     context: Context,
@@ -37,12 +40,7 @@ class CustomLinearLayout@JvmOverloads constructor(
         textView.setBackgroundColor(Color.parseColor("#000000"))
         textView.setTextColor(Color.parseColor("#ffffffff"))
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-        val px = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            4f,
-            resources.displayMetrics
-        )
-        textView.setPadding(px.toInt())
+        textView.setPadding(4.dp)
     }
 
     init {
@@ -64,7 +62,7 @@ class CustomLinearLayout@JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        // TODO: consider storing these as member variables to reduce
+/*        // TODO: consider storing these as member variables to reduce
         // allocations per draw cycle.
         val paddingLeft = paddingLeft
         val paddingTop = paddingTop
@@ -72,7 +70,7 @@ class CustomLinearLayout@JvmOverloads constructor(
         val paddingBottom = paddingBottom
 
         val contentWidth = width - paddingLeft - paddingRight
-        val contentHeight = height - paddingTop - paddingBottom
+        val contentHeight = height - paddingTop - paddingBottom*/
     }
 
 }

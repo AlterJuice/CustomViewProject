@@ -1,104 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        android:layout_height="wrap_content"
+        android:layout_above="@id/customShapeView3"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="10dp"
 
-        <ScrollView
-            android:id="@+id/scrollCustomList"
+        android:background="@color/gray_400">
+
+        <com.edu.customview.CustomLinearLayout
+
+            android:id="@+id/customList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/customShapeView3"
-            android:layout_alignParentTop="true"
-            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content">
 
-            android:background="@color/gray_400">
-            <com.edu.customview.CustomLinearLayout
-                drawableX="14"
-
-                android:id="@+id/customList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </com.edu.customview.CustomLinearLayout>
+        </com.edu.customview.CustomLinearLayout>
 
 
-        </ScrollView>
+    </ScrollView>
 
 
-        <com.edu.customview.CustomShapeView
-            android:id="@+id/customShapeView3"
-            style="@style/Widget.Theme.CustomViewProject.MyView"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_above="@id/customShapeView1"
-            android:layout_centerInParent="true"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="5dp"
-            android:padding="30dp"
+    <com.edu.customview.CustomShapeView
+        android:id="@+id/customShapeView3"
+        style="@style/Widget.Theme.CustomViewProject.MyView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_above="@id/customShapeView1"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:padding="30dp"
 
-            android:rotation="45"
-            app:compareInnerWithOuter="false"
+        android:rotation="45"
+        app:compareInnerWithOuter="false"
 
-            app:innerPadding="10dp"
-            app:innerRadiusTopLeft="15dp"
-            app:outerRadiusTopLeft="15dp"
-            app:radius="100dp"
-            app:shapeColor="@color/light_blue_400"
-            app:strokeColor="@color/light_blue_600" />
+        app:innerPadding="10dp"
+        app:innerRadiusTopLeft="15dp"
+        app:outerRadiusTopLeft="15dp"
+        app:radius="100dp"
+        app:shapeColor="@color/light_blue_400"
+        app:strokeColor="@color/light_blue_600" />
 
-        <com.edu.customview.CustomShapeView
-            android:id="@+id/customShapeView1"
-            style="@style/Widget.Theme.CustomViewProject.MyView"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="5dp"
-            android:padding="0dp"
-            android:paddingHorizontal="20dp"
+    <com.edu.customview.CustomShapeView
+        android:id="@+id/customShapeView1"
+        style="@style/Widget.Theme.CustomViewProject.MyView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:padding="0dp"
+        android:paddingHorizontal="20dp"
 
-            app:compareInnerWithOuter="false"
-            app:innerPaddingBottom="30dp"
+        app:compareInnerWithOuter="false"
+        app:innerPaddingBottom="30dp"
 
-            app:innerPaddingTop="30dp"
-            app:outerRadius="20dp"
-            app:shapeColor="@color/teal_200"
-            app:strokeColor="@color/teal_700"
+        app:innerPaddingTop="30dp"
+        app:outerRadius="20dp"
+        app:shapeColor="@color/teal_200"
+        app:strokeColor="@color/teal_700"
 
-            />
+        />
 
-        <com.edu.customview.CustomShapeView
-            android:id="@+id/customShapeView2"
-            style="@style/Widget.Theme.CustomViewProject.MyView"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="5dp"
-            android:padding="0dp"
-            android:paddingHorizontal="20dp"
+    <com.edu.customview.CustomShapeView
+        android:id="@+id/customShapeView2"
+        style="@style/Widget.Theme.CustomViewProject.MyView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:padding="0dp"
+        android:paddingHorizontal="20dp"
 
-            app:innerRadiusBottomRight="10dp"
-            app:innerRadiusTopLeft="10dp"
-            app:outerRadiusBottomRight="10dp"
+        app:innerRadiusBottomRight="10dp"
+        app:innerRadiusTopLeft="10dp"
+        app:outerRadiusBottomRight="10dp"
 
-            app:outerRadiusTopLeft="10dp"
-            app:radius="100dp"
-            app:shapeColor="@color/orange_300"
-            app:strokeColor="@color/orange_400"
-            app:strokeWidth="7dp"
-
-
-            />
+        app:outerRadiusTopLeft="10dp"
+        app:radius="100dp"
+        app:shapeColor="@color/orange_300"
+        app:strokeColor="@color/orange_400"
+        app:strokeWidth="7dp"
 
 
-    </RelativeLayout>
-</layout>
+        />
+
+
+</RelativeLayout>

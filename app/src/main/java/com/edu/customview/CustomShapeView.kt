@@ -64,24 +64,15 @@ class CustomShapeView @JvmOverloads constructor(
 
     var strokeWidth: Float
         get() = _strokeWidth
-        set(value) {
-            _strokeWidth = value
-            updateShapeMeasurements()
-        }
+        set(value) { _strokeWidth = value }
 
     var strokeColor: Int
         get() = _strokeColor
-        set(value) {
-            _strokeColor = value
-            updateShapeMeasurements()
-        }
+        set(value) { _strokeColor = value }
 
     var shapeColor: Int
         get() = _shapeColor
-        set(value) {
-            _shapeColor = value
-            updateShapeMeasurements()
-        }
+        set(value) { _shapeColor = value }
 
     var outerRadius: ShapeRadius
         get() = _outerRadius
@@ -104,7 +95,6 @@ class CustomShapeView @JvmOverloads constructor(
 
     fun setOuterCornerRadius(shapeRadius: ShapeRadius){
         _outerRadius = shapeRadius
-        updateShapeMeasurements()
     }
 
     fun setInnerCornerRadius(topLeft: Float, topRight: Float, bottomLeft: Float, bottomRight: Float){
@@ -118,12 +108,8 @@ class CustomShapeView @JvmOverloads constructor(
 
     fun setInnerCornerRadius(shapeRadius: ShapeRadius){
         _innerRadius = shapeRadius
-        updateShapeMeasurements()
     }
 
-    fun updateShapeMeasurements(){
-
-    }
 
     init {
         init(attrs, defStyle)
